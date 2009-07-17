@@ -96,6 +96,7 @@ bool HdfsSync::openInternal(bool incrementFilename, struct tm* current_time) {
     }
 
     bool sync = false;
+    bool delete_file = false;
     string fullFilename;
     string baseFilename;
       
@@ -104,7 +105,7 @@ bool HdfsSync::openInternal(bool incrementFilename, struct tm* current_time) {
         writeFile->write(meta_logfile_prefix + file);
       }
 
-      if(writeFile->fileSize())
+      if(writeFile->fileSize()) 
         sync = true;
       
       fullFilename = writeFile->getFileName();
@@ -114,7 +115,7 @@ bool HdfsSync::openInternal(bool incrementFilename, struct tm* current_time) {
       {
         baseFilename = fullFilename.substr(found+1);
       }      
-   
+      delete_file = true;
       writeFile->close();
     }
 
@@ -179,10 +180,12 @@ bool HdfsSync::openInternal(bool incrementFilename, struct tm* current_time) {
                   LOG_OPER("Copied to HDFS hdfs://%s:%d/%s",hdfsHost.c_str(),hdfsPort,writePath.c_str());
               }
           }
-        deleteOldest(current_time);
       }            
     }
-
+    if(delete_file)
+    {
+        deleteOldest(current_time);
+    }
   } catch(std::exception const& e) {
     LOG_OPER("[%s] Failed to create/open file of type <%s> for writing",
              categoryHandled.c_str(), fsType.c_str());
