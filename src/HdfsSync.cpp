@@ -179,8 +179,8 @@ bool HdfsSync::openInternal(bool incrementFilename, struct tm* current_time) {
                   LOG_OPER("Copied to HDFS hdfs://%s:%d/%s",hdfsHost.c_str(),hdfsPort,writePath.c_str());
               }
           }
+        deleteOldest(current_time);
       }            
-      deleteOldest(current_time);
     }
 
   } catch(std::exception const& e) {
